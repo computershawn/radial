@@ -12,16 +12,16 @@ class Sun {
 
     float x0, x1;
     for (int i = 0; i < numLines / 2; i++) {
-      x0 = cx + 2 * i * sp - xOff;
-      x1 = cx + (2 * i + 1) * sp - xOff;
-      lines.vertex(x0 - diam0, cy - diam0);
-      lines.vertex(x0 + diam0, cy + diam0);
-      lines.vertex(x1 - diam0, cy - diam0);
-      lines.vertex(x1 + diam0, cy + diam0);
+      x0 = dims.x / 2 + 2 * i * sp - xOff;
+      x1 = dims.x / 2 + (2 * i + 1) * sp - xOff;
+      lines.vertex(x0 - diam0, dims.y / 2 - diam0);
+      lines.vertex(x0 + diam0, dims.y / 2 + diam0);
+      lines.vertex(x1 - diam0, dims.y / 2 - diam0);
+      lines.vertex(x1 + diam0, dims.y / 2 + diam0);
     }
     lines.endShape();
 
-    PShape circ = createShape(ELLIPSE, cx, cy, diam0, diam0);
+    PShape circ = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam0, diam0);
     hatch = intersectShapes(circ, lines);
     PGS_Conversion.setAllStrokeColor(hatch, lineColor, 1);
   }
@@ -30,14 +30,14 @@ class Sun {
     fill(fillColor);
     noStroke();
     fill(fillColor);
-    circle(cx, cy, diam1);
+    circle(dims.x / 2, dims.y / 2, diam1);
 
     shape(hatch);
 
     noFill();
     stroke(lineColor);
-    circle(cx, cy, diam0);
-    circle(cx, cy, diam0 + 2);
+    circle(dims.x / 2, dims.y / 2, diam0);
+    circle(dims.x / 2, dims.y / 2, diam0 + 2);
     
   }
 }

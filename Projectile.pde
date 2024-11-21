@@ -3,7 +3,7 @@ class Projectile {
   PVector trajectory;
   PVector pos;
   int diameter;
-  int myFrame;
+  int frameOffset;
   float angle;
   float x0, y0;
   int kind;
@@ -17,20 +17,22 @@ class Projectile {
     angle = random(TWO_PI);
     pos = new PVector(0, 0);
     diameter = round(random(maxDiam - minDiam)) + minDiam;
-    myFrame = floor(random(timeSpan));
+    frameOffset = floor(random(timeSpan));
     int r = 6;
     x0 = r * cos(angle);
     y0 = r * sin(angle);
-    circo = createShape(ELLIPSE, cx, cy, diam1, diam1);
+    circo = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
   }
 
-  void update() {
-    float amt = myFrame % timeSpan / (float) timeSpan;
+  void update(int frameNum) {
+    int currentFrame = frameNum + frameOffset;
+
+    float amt = currentFrame % timeSpan / (float) timeSpan;
     float t = amt * amt * amt; // cubic
 
-    pos.x = cx + t * (diag + diameter / 2) * cos(angle);
-    pos.y = cy + t * (diag + diameter / 2) * sin(angle);
-    myFrame += 1;
+    pos.x = dims.x / 2 + t * (diag + diameter / 2) * cos(angle);
+    pos.y = dims.y / 2 + t * (diag + diameter / 2) * sin(angle);
+    //frameOffset += 1;
   }
 
   //PShape circo() {
@@ -47,29 +49,49 @@ class Projectile {
   //  return temp;
   //}
 
+  boolean inRange(float x, float y, float r) {
+    if (x < -r || x > dims.x + r) {
+      return false;
+    }
+    if (y < -r || y > dims.y + r) {
+      return false;
+    }
+    return true;
+  }
+
   void render() {
     switch(kind) {
     case 1:
-      float x1 = pos.x + x0;
-      float y1 = pos.y + y0;
-      float x2 = pos.x - x0;
-      float y2 = pos.y - y0;
-      PShape temp = createShape();
-      temp.beginShape();
-      temp.vertex(x1, y1);
-      temp.vertex(x2, y2);
-      temp.endShape();
-      // Intersect resulting shape with center sun
-      PShape ln = subtractShapes(temp, circo);
-      PGS_Conversion.setAllStrokeColor(ln, lineColor, 1);
-      shape(ln);
+      if (inRange(pos.x, pos.y, sqrt(x0 * x0 + y0 + y0))) {
+        float x1 = pos.x + x0;
+        float y1 = pos.y + y0;
+        float x2 = pos.x - x0;
+        float y2 = pos.y - y0;
+        PShape temp = createShape();
+        temp.beginShape();
+        temp.vertex(x1, y1);
+        temp.vertex(x2, y2);
+        temp.endShape();
+        // Intersect resulting shape with center sun
+        PShape ln = subtractShapes(temp, circo);
+        PGS_Conversion.setAllStrokeColor(ln, lineColor, 1);
+        //if (inRange(pos.x, pos.y, sqrt(x0 * x0 + y0 + y0))) {
+        //  PGS_Conversion.setAllStrokeColor(ln, lineColor, 1);
+        //} else {
+        //  PGS_Conversion.setAllStrokeColor(ln, color(255, 0, 0), 1);
+        //}
+        shape(ln);
+      }
       break;
     case 2:
     default:
-      float dist = dist(pos.x, pos.y, cx, cy);
-      fill(fillColor);
-      stroke(lineColor);
-      if (dist > 0.5 * (diam1 - diameter)) {
+      //if (inRange(pos.x, pos.y, diameter / 2)) {
+      float dist = dist(pos.x, pos.y, dims.x / 2, dims.y / 2);
+      boolean withinBounds = inRange(pos.x, pos.y, diameter / 2);
+      if (dist > 0.5 * (diam1 - diameter) && withinBounds) {
+        fill(fillColor);
+        stroke(lineColor);
+        //if (dist > 0.5 * (diam1 - diameter)) {
         circle(pos.x, pos.y, diameter);
       }
       // The below code uses PGS boolean operations to create stars

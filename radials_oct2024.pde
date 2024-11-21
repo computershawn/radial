@@ -11,7 +11,7 @@ int fillColor = #E5FFFA;
 int numStars = 60;
 int numRays = 60;
 boolean saving = false;
-int fps = 12;
+int fps = 15;
 int animationDuration = 12;
 
 Projectile[] stars = new Projectile[numStars];
@@ -25,20 +25,30 @@ PShape frame, fancyMat;
 Sun sun;
 ArrayList<PVector> framePoints;
 
+PVector dims = new PVector(166, 226);
+int frameCols = 3;
+int frameRows = 3;
+int numPages = 20;
+int pageStartIndex = 0;
+
 public enum Modes {
   PRINT,
     ANIMATE
 }
 Modes currentMode;
+ArrayList<Frame> frames;
+int currentPage = 0;
 
 void setup() {
-  size(166, 226);
+  //size(166, 226);
+  size(612, 792);
 
   wd = width;
   ht = height;
   cx = wd / 2;
   cy = ht / 2;
-  diag = 0.5 * sqrt(ht * ht + wd * wd);
+  //diag = 0.5 * sqrt(ht * ht + wd * wd);
+  diag = 0.5 * sqrt(dims.y * dims.y + dims.x * dims.x);
 
   rays = new ArrayList<Ray>();
   for (int i = 0; i < numRays; i++) {
@@ -68,52 +78,119 @@ void setup() {
   fancyMat = niceLittleMat();
   sun = new Sun();
 
-  currentMode = Modes.ANIMATE;
+  frames = new ArrayList<Frame>();
+  int gutter = 24;
+  float xStep = dims.x + gutter;
+  float yStep = dims.y + gutter;
+  float gridWd = frameCols * dims.x + (frameCols - 1) * gutter;
+  float gridHt = frameRows * dims.y + (frameRows - 1) * gutter;
+  float xOff = (wd - gridWd) / 2;
+  float yOff = (ht - gridHt) / 2;
+  for (int i = 0; i < frameRows; i++) {
+    for (int j = 0; j < frameCols; j++) {
+      frames.add(new Frame(xOff + xStep * j, yOff + yStep * i, i * frameCols + j));
+    }
+  }
+  //frames.add(new Frame(0, 20, 0));
+  //frames.add(new Frame(dims.x, 20, 1));
+
+  currentMode = Modes.PRINT;
   frameRate(fps);
 }
 
-void renderAnimation() {
-  background(fillColor);
+//void renderAnimation() {
+//  background(fillColor);
 
-  // Layer: Rays
-  for (Ray ray : rays) {
-    ray.update();
-    ray.render();
-  }
+//  // Layer: Rays
+//  for (Ray ray : rays) {
+//    ray.update();
+//    ray.render();
+//  }
 
-  // Update star positions
-  for (int i = 0; i < numStars; i++) {
-    stars[i].update();
-  };
+//  // Update star positions
+//  for (int i = 0; i < numStars; i++) {
+//    stars[i].update();
+//  };
 
-  // Layer: Background stars
-  for (int i = 0; i < numStars / 2; i++) {
-    stars[i].render();
-  };
+//  // Layer: Background stars
+//  for (int i = 0; i < numStars / 2; i++) {
+//    stars[i].render();
+//  };
 
-  // Layer: Mat
-  shape(fancyMat);
-  shape(frame);
+//  // Layer: Mat
+//  //shape(fancyMat);
+//  shape(frame);
 
-  // Layer: Foreground stars
-  for (int i = numStars / 2; i < numStars; i++) {
-    stars[i].render();
-  };
+//  // Layer: Foreground stars
+//  for (int i = numStars / 2; i < numStars; i++) {
+//    stars[i].render();
+//  };
 
-  // Layer: Outer frame
-  int m = 6;
-  simpleMat(m);
+//  // Layer: Outer frame
+//  int m = 6;
+//  simpleMat(m);
 
-  // Layer: Sun in center
-  sun.render();
-}
+//  // Layer: Sun in center
+//  sun.render();
+//}
+
+//void updateScene() {
+//  // Layer: Rays
+//  for (Ray ray : rays) {
+//    ray.update();
+//  }
+
+//  // Update star positions
+//  for (int i = 0; i < numStars; i++) {
+//    stars[i].update();
+//  };
+//}
+
+//void renderAnimation() {
+//  //background(fillColor);
+
+//  // Layer: Rays
+//  for (Ray ray : rays) {
+//    ray.render();
+//  }
+
+//  // Layer: Background stars
+//  for (int i = 0; i < numStars / 2; i++) {
+//    stars[i].render();
+//  };
+
+//  // Layer: Mat
+//  //shape(fancyMat);
+//  shape(frame);
+
+//  // Layer: Foreground stars
+//  for (int i = numStars / 2; i < numStars; i++) {
+//    stars[i].render();
+//  };
+
+//  // Layer: Outer frame
+//  int m = 6;
+//  simpleMat(m);
+
+//  // Layer: Sun in center
+//  sun.render();
+//}
 
 void renderPrintMode() {
   if (saving) {
-    beginRecord(SVG, "output/radials-" + getTimestamp() + ".svg");
+    beginRecord(SVG, "output/radials-" + getTimestamp() + "-" + currentPage + ".svg");
   }
 
-  background(fillColor);
+  //pushMatrix();
+  //translate(cx - dims.x / 2, cy - dims.y / 2);
+  //renderAnimation();
+  //popMatrix();
+  //Frame f = frames.get(0);
+  //f.render(0, true);
+  for (int j = 0; j < frames.size(); j++) {
+    Frame f = frames.get(j);
+    f.render(j, false);
+  }
 
   if (saving) {
     saving = false;
@@ -122,9 +199,19 @@ void renderPrintMode() {
 }
 
 void draw() {
+  background(fillColor);
   switch(currentMode) {
   case ANIMATE:
-    renderAnimation();
+    //pushMatrix();
+    //translate(cx - dims.x / 2, cy - dims.y / 2);
+    //renderAnimation();
+    //popMatrix();
+    //for (int j = 0; j < frames.size(); j++) {
+    //  Frame f = frames.get(j);
+    //  f.render(j);
+    //}
+    Frame f = frames.get(0);
+    f.render(frameCount, true);
     break;
   case PRINT:
   default:
@@ -145,5 +232,22 @@ void keyPressed() {
       println(":: View animation mode");
       currentMode = Modes.ANIMATE;
     }
+  }
+  if (key == CODED && !saving && currentMode == Modes.PRINT) {
+    if (keyCode == LEFT) {
+      if (currentPage == 0) {
+        currentPage = numPages - 1;
+      } else {
+        currentPage -= 1;
+      }
+    } else if (keyCode == RIGHT) {
+      if (currentPage == numPages - 1) {
+        currentPage = 0;
+      } else {
+        currentPage += 1;
+      }
+    }
+
+    pageStartIndex = currentPage * frameCols * frameRows;
   }
 }

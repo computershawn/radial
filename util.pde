@@ -1,15 +1,15 @@
 ArrayList<PVector> getFramePoints() {
   ArrayList<PVector> points = new ArrayList<PVector>();
 
-  int x1 = wd / 2;
-  int x2 = 72;  // control
-  int x3 = 13;  // control
-  int x4 = 13;
+  float x1 = dims.x / 2;
+  float x2 = 72;  // control
+  float x3 = 13;  // control
+  float x4 = 13;
 
-  int y1 = 11;
-  int y2 = 26;  // control
-  int y3 = 16;  // control
-  int y4 = 49;
+  float y1 = 11;
+  float y2 = 26;  // control
+  float y3 = 16;  // control
+  float y4 = 49;
 
   int steps = 20;
 
@@ -46,15 +46,15 @@ PShape niceLittleFrame() {
   }
   for (int i = steps - 1; i >= 0; i--) {
     p = framePoints.get(i);
-    f.vertex(p.x, ht - p.y);
+    f.vertex(p.x, dims.y - p.y);
   }
   for (int i = 1; i < steps; i++) {
     p = framePoints.get(i);
-    f.vertex(wd - p.x, ht - p.y);
+    f.vertex(dims.x - p.x, dims.y - p.y);
   }
   for (int i = steps - 1; i > 0; i--) {
     p = framePoints.get(i);
-    f.vertex(wd - p.x, p.y);
+    f.vertex(dims.x - p.x, p.y);
   }
   f.endShape(CLOSE);
 
@@ -66,13 +66,13 @@ PShape niceLittleMat() {
   PShape g = niceLittleFrame();
 
   f.beginShape();
-  f.fill(#ff00ff);
+  //f.fill(#ff00ff);
   f.stroke(lineColor);
   //f.noStroke();
   f.vertex(0, 0);
-  f.vertex(wd, 0);
-  f.vertex(wd, ht);
-  f.vertex(0, ht);
+  f.vertex(dims.x, 0);
+  f.vertex(dims.x, dims.y);
+  f.vertex(0, dims.y);
   f.endShape(CLOSE);
 
   PShape h = PGS_ShapeBoolean.subtract(f, g);
@@ -82,27 +82,29 @@ PShape niceLittleMat() {
 }
 
 void simpleMat(int m) {
+  float w = dims.x;
+  float h = dims.y;
   noStroke();
   fill(fillColor);
-  //fill(fillColor, 127);
+  //fill(0, 127);
   beginShape();
   vertex(0, 0);
-  vertex(wd, 0);
-  vertex(wd, ht);
-  vertex(0, ht);
+  vertex(w, 0);
+  vertex(w, h);
+  vertex(0, h);
   beginContour();
   vertex(m, m);
-  vertex(m, ht - m);
-  vertex(wd - m, ht - m);
-  vertex(wd - m, m);
+  vertex(m, h - m);
+  vertex(w - m, h - m);
+  vertex(w - m, m);
   endContour();
   endShape(CLOSE);
 
   noFill();
   stroke(lineColor);
-  rect(m, m, wd - 2 * m, ht - 2 * m);
+  rect(m, m, w - 2 * m, h - 2 * m);
   float n = 0.5 * m;
-  rect(n, n, wd - 2 * n, ht - 2 * n);
+  rect(n, n, w - 2 * n, h - 2 * n);
 }
 
 PShape subtractShapes(PShape shape1, PShape shape2) {

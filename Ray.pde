@@ -3,7 +3,7 @@ class Ray {
   PVector endPoint;
   float startAngle;
   float angle;
-  int currentFrame;
+  int frameOffset;
   int timeSpan;
   int index;
   float sweep;
@@ -20,19 +20,20 @@ class Ray {
     startAngle = random(TWO_PI);
     angle = startAngle;
     timeSpan = fps * animationDuration;
-    currentFrame = floor(random(timeSpan));
+    frameOffset = floor(random(timeSpan));
     sweep = 0.5 * random(radians(6), radians(24));
     travel = 0.5 * random(radians(12), radians(135));
-    int r = wd;
+    float r = dims.x;
     pt0 = new PVector(r * cos(-sweep), r * sin(-sweep));
     pt1 = new PVector(r * cos(sweep), r * sin(sweep));
     r0 = sqrt(pt0.x * pt0.x + pt0.y * pt0.y);
     r1 = sqrt(pt1.x * pt1.x + pt1.y * pt1.y);
     //co = random(1) > 0.7 ? color(random(24, 143)) : 255;
-    circo = createShape(ELLIPSE, cx, cy, diam1, diam1);
+    circo = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
   }
 
-  void update() {
+  void update(int frameNum) {
+    int currentFrame = frameNum + frameOffset;
     float amt = currentFrame % timeSpan / (float) timeSpan;
     // float t = amt; // linear
     // float t = amt == 0 ? 0 : pow(2, 10 * amt - 10); // exponential;
@@ -40,7 +41,7 @@ class Ray {
     //position.x = wd / 2 + t * (diag + diameter / 2) * cos(angle);
     //position.y = ht / 2 + t * (diag + diameter / 2) * sin(angle);
     angle = startAngle + travel * cos(amt * TWO_PI);
-    currentFrame += 1;
+    //currentFrame += 1;
   }
 
   //void render() {
@@ -65,9 +66,9 @@ class Ray {
     float ya = r0 * sin(angle);
     float xb = r1 * cos(angle);
     float yb = r1 * sin(angle);
-    temp.vertex(cx, cy);
-    temp.vertex(cx + xa, cy + ya);
-    temp.vertex(cx + xb, cy + yb);
+    temp.vertex(dims.x / 2, dims.y / 2);
+    temp.vertex(dims.x / 2 + xa, dims.y / 2 + ya);
+    temp.vertex(dims.x / 2 + xb, dims.y / 2 + yb);
     temp.endShape(CLOSE);
     
     // Intersect initial shape with frame
