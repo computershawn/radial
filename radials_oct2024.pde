@@ -21,7 +21,7 @@ int diam0 = 40;
 int diam1 = diam0 + 4;
 int minDiam = 6;
 int maxDiam = 16;
-PShape niceFrame, fancyMat, simpleFrame;
+PShape niceFrame, niceFrameOpen, fancyMat, simpleFrame;
 PShape clipFrame1, clipFrame2;
 Sun sun;
 ArrayList<PVector> framePoints;
@@ -74,9 +74,10 @@ void setup() {
   //  stars[i] = new Projectile(kind);
   //}
   framePoints = getFramePoints();
-  niceFrame = getNiceLittleFrame();
-  fancyMat = niceLittleMat();
-  simpleFrame = simpleMat(6);
+  niceFrame = getNiceLittleFrame(true);
+  niceFrameOpen = getNiceLittleFrame(false);
+  fancyMat = getNiceLittleMat();
+  simpleFrame = getSimpleMat(6);
   clipFrame1 = getClipFrame1();
   clipFrame2 = getClipFrame2();
   sun = new Sun();

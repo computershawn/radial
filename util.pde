@@ -52,7 +52,7 @@ String getTimestamp() {
   return ts;
 }
 
-PShape getNiceLittleFrame() {
+PShape getNiceLittleFrame(boolean close) {
   PShape f = createShape();
   PVector p;
 
@@ -78,13 +78,20 @@ PShape getNiceLittleFrame() {
     p = framePoints.get(i);
     f.vertex(dims.x - p.x, p.y);
   }
-  f.endShape(CLOSE);
+
+  if (close) {
+    f.endShape(CLOSE);
+  } else {
+    p = framePoints.get(0);
+    f.vertex(p.x, p.y);
+    f.endShape();
+  }
 
   return f;
 }
 
 PShape getClipFrame1() {
-  PShape inner = getNiceLittleFrame();
+  PShape inner = getNiceLittleFrame(true);
   PShape outer = createShape();
   int m = 20;
 
@@ -110,7 +117,7 @@ PShape getClipFrame2() {
   outer.vertex(-m, dims.y + m);
   outer.endShape(CLOSE);
 
-  PShape inner = simpleMat(6);
+  PShape inner = getSimpleMat(6);
 
   //inner.beginShape();
   //inner.vertex(n, n);
@@ -122,9 +129,9 @@ PShape getClipFrame2() {
   return PGS_ShapeBoolean.subtract(outer, inner);
 }
 
-PShape niceLittleMat() {
+PShape getNiceLittleMat() {
   PShape f = createShape();
-  PShape g = getNiceLittleFrame();
+  PShape g = getNiceLittleFrame(true);
 
   f.beginShape();
   //f.fill(#ff00ff);
@@ -146,7 +153,7 @@ PShape niceLittleMat() {
   return h;
 }
 
-void simpleMatORIG(int m) {
+void getSimpleMatORIG(int m) {
   float w = dims.x;
   float h = dims.y;
   //noStroke();
@@ -172,7 +179,7 @@ void simpleMatORIG(int m) {
   rect(n, n, w - 2 * n, h - 2 * n);
 }
 
-PShape simpleMat(int m) {
+PShape getSimpleMat(int m) {
   float w = dims.x;
   float h = dims.y;
   //noStroke();
