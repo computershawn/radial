@@ -108,7 +108,6 @@ PShape getClipFrame1() {
 PShape getClipFrame2() {
   int m = 20;
   PShape outer = createShape();
-  //PShape inner = createShape();
 
   outer.beginShape();
   outer.vertex(-m, -m);
@@ -116,15 +115,7 @@ PShape getClipFrame2() {
   outer.vertex(dims.x + m, dims.y + m);
   outer.vertex(-m, dims.y + m);
   outer.endShape(CLOSE);
-
   PShape inner = getSimpleMat(6);
-
-  //inner.beginShape();
-  //inner.vertex(n, n);
-  //inner.vertex(wd - n, n);
-  //inner.vertex(wd - n, ht - n);
-  //inner.vertex(n, ht - n);
-  //inner.endShape(CLOSE);
 
   return PGS_ShapeBoolean.subtract(outer, inner);
 }
@@ -134,9 +125,7 @@ PShape getNiceLittleMat() {
   PShape g = getNiceLittleFrame(true);
 
   f.beginShape();
-  //f.fill(#ff00ff);
   f.stroke(lineColor);
-  //f.noStroke();
   f.vertex(0, 0);
   f.vertex(dims.x, 0);
   f.vertex(dims.x, dims.y);
@@ -146,57 +135,14 @@ PShape getNiceLittleMat() {
   PShape h = PGS_ShapeBoolean.subtract(f, g);
 
   PGS_Conversion.disableAllStroke(h);
-  //PGS_Conversion.setAllFillColor(h, fillColor);
-  //PGS_Conversion.setAllFillColor(h, color(0, 0, 0, 127));
   PGS_Conversion.disableAllFill(h);
 
   return h;
 }
 
-void getSimpleMatORIG(int m) {
-  float w = dims.x;
-  float h = dims.y;
-  //noStroke();
-  //fill(fillColor);
-  ////fill(0, 127);
-  //beginShape();
-  //vertex(0, 0);
-  //vertex(w, 0);
-  //vertex(w, h);
-  //vertex(0, h);
-  //beginContour();
-  //vertex(m, m);
-  //vertex(m, h - m);
-  //vertex(w - m, h - m);
-  //vertex(w - m, m);
-  //endContour();
-  //endShape(CLOSE);
-
-  noFill();
-  stroke(lineColor);
-  rect(m, m, w - 2 * m, h - 2 * m);
-  float n = 0.5 * m;
-  rect(n, n, w - 2 * n, h - 2 * n);
-}
-
 PShape getSimpleMat(int m) {
   float w = dims.x;
   float h = dims.y;
-  //noStroke();
-  //fill(fillColor);
-  ////fill(0, 127);
-  //beginShape();
-  //vertex(0, 0);
-  //vertex(w, 0);
-  //vertex(w, h);
-  //vertex(0, h);
-  //beginContour();
-  //vertex(m, m);
-  //vertex(m, h - m);
-  //vertex(w - m, h - m);
-  //vertex(w - m, m);
-  //endContour();
-  //endShape(CLOSE);
 
   noFill();
   stroke(lineColor);
@@ -218,7 +164,6 @@ void satellite() {
   float d = 0.5 * wd;
   arc(cx, cy, d, d, 0, radians(15));
 }
-
 
 float easeInCubic(float t) {
   return t * t * t;

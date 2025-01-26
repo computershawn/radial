@@ -35,24 +35,11 @@ class Frame {
     stars = new ArrayList<Projectile>();
 
     for (int i = 0; i < numStars; i++) {
-      //PVector traj = PVector.random2D();
-      // Projectile star = new Projectile(new PVector(2 * wd, 0), traj);
-      //int kind = i < numStars / 2 ? 1 : 2;
       int kind = i % 2 == 0 ? 1 : 2;
-      //Projectile star = new Projectile(kind);
-      //stars[i] = new Projectile(kind);
       stars.add(new Projectile(kind));
     }
 
     sunOutline = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
-
-    //framePoints = getFramePoints();
-    //frame = niceLittleFrame();
-    //fancyMat = niceLittleMat();
-    //sun = new Sun();
-
-    //currentMode = Modes.ANIMATE;
-    //frameRate(fps);
   }
 
   void render(int frameNumber, boolean isAnimating) {
@@ -79,9 +66,9 @@ class Frame {
     PShape circo = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
     // Intersect initial shape with frame
     rayGroup = intersectShapes(rayGroup, niceFrame);
-    PShape blob1 = blobItems(stars, stars.size());
+    PShape starCluster = blobItems(stars, stars.size());
     rayGroup = subtractShapes(rayGroup, circo);
-    rayGroup = subtractShapes(rayGroup, blob1);
+    rayGroup = subtractShapes(rayGroup, starCluster);
     PGS_Conversion.setAllStrokeColor(rayGroup, lineColor, 1);
     shape(rayGroup);
 
@@ -104,58 +91,8 @@ class Frame {
         j += 1;
       }
     }
-    //temp[numStars / 2] = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
 
-    //PShape cluster = PGS_ShapeBoolean.union(temp);
-
-    //temp[numStars / 2] = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
-
-    PShape cluster = PGS_ShapeBoolean.union(temp);
-    PShape allTings = PGS_ShapeBoolean.union(cluster, sunOutline);
-
-    // Intersect initial shape with frame
-    rayGroup = intersectShapes(rayGroup, niceFrame);
-    rayGroup = subtractShapes(rayGroup, allTings);
-    //PGS_Conversion.setAllStrokeColor(rayGroup, lineColor, 1);
-    PGS_Conversion.setAllStrokeColor(rayGroup, color(255, 0, 0), 1);
-    //shape(rayGroup);
-    //shape(allTings);
-
-    cluster = subtractShapes(cluster, sunOutline);
-    //shape(cluster);
-
-    // Layer: Background stars
-    //for (int i = 0; i < numStars / 2; i++) {
-    //  stars[i].render();
-    //};
-
-    //PShape sunOutlineLoFi = circo(dims.x / 2, dims.y / 2, diam1, true);
-    //shape(sunOutlineLoFi);
-    //shape(starGroup);
-
-    //PShape st = circo(60, 100, 40, false);
-
-    //int n = 24;
-    //PShape st = createShape();
-    //st.beginShape();
-    //st.noFill();
-
-    //for (int i = 0; i < n; i++) {
-    //  float ang = TWO_PI * i / n;
-    //  float x = 60 + 0.5 * 40 * cos(ang);
-    //  float y = 100 + 0.5 * 40 * sin(ang);
-    //  st.vertex(x, y);
-    //}
-    //st.endShape();
-
-    //starGroup.addChild(st);
-    //PShape wut = subtractShapes(st, sunOutlineLoFi);
-    //PGS_Conversion.setAllStrokeColor(st, lineColor, 1);
-    //PGS_Conversion.setAllStrokeColor(wut, color(0, 255, 0), 1);
-    //shape(wut);
-
-    //PShape ps = removeHiddenLines(stars);
-    PShape[] ps2 = removeHiddenLines2(stars);
+    PShape[] ps2 = removeHiddenLines(stars);
     PShape blob = blobItems(stars, stars.size() / 2);
     PShape lines0 = createShape();
     int d = ps2[0].getChildCount();
@@ -190,34 +127,35 @@ class Frame {
     PShape blep0 = intersectShapes(lines0, niceFrame);
     PShape blep1 = intersectShapes(lines1, simpleFrame);
 
-    PGS_Conversion.setAllStrokeColor(blep0, color(255, 0, 0), 1);
-    PGS_Conversion.setAllStrokeColor(blep1, color(0, 0, 255), 1);
-    PGS_Conversion.setAllStrokeColor(ps2[2], color(0, 255, 0), 1);
+    PGS_Conversion.setAllStrokeColor(blep0, lineColor, 1);
+    PGS_Conversion.setAllStrokeColor(blep1, lineColor, 1);
+    PGS_Conversion.setAllStrokeColor(ps2[2], lineColor, 1);
+    PGS_Conversion.setAllStrokeColor(ps2[3], lineColor, 1);
+    PGS_Conversion.disableAllFill(ps2[2]);
     PGS_Conversion.disableAllFill(ps2[3]);
-    PGS_Conversion.setAllStrokeColor(ps2[3], 0, 1);
+    
+    // Layer: Sun in center
+    sun.render();
 
-    // Layer: Mat
+    // Layer: Stylized frame
     PShape niceFrameClipped = subtractShapes(niceFrameOpen, blob);
     PGS_Conversion.disableAllFill(niceFrameClipped);
-    PGS_Conversion.setAllStrokeColor(niceFrameClipped, color(0, 255, 255), 1);
+    PGS_Conversion.setAllStrokeColor(niceFrameClipped, lineColor, 1);
     shape(niceFrameClipped);
-    
+
     // Layer: Background stars
-    shape(blep0);
-    shape(ps2[2]);
+    shape(blep0);    // Lines
+    shape(ps2[2]);   // Circles
 
     // Layer: Foreground stars
-    shape(blep1);
-    shape(ps2[3]);
+    shape(blep1);    // Lines
+    shape(ps2[3]);   // Circles
 
-    // Layer: Outer frame
+    // Layer: Outer rectangle frame
     shape(simpleFrame);
     noFill();
     int b = 3;
     rect(b, b, dims.x - 2 * b, dims.y - 2 * b);
-
-    // Layer: Sun in center
-    sun.render();
 
     popMatrix();
   }

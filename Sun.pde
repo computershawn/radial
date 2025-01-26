@@ -23,21 +23,17 @@ class Sun {
 
     PShape circ = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam0, diam0);
     hatch = intersectShapes(circ, lines);
-    //PGS_Conversion.setAllStrokeColor(hatch, lineColor, 1);
-    PGS_Conversion.setAllStrokeColor(hatch, color(0, 255, 0), 1);
+    PGS_Conversion.setAllStrokeColor(hatch, lineColor, 1);
   }
 
   void render() {
     noStroke();
     fill(fillColor);
-    //fill(0, 127);
-    //circle(dims.x / 2, dims.y / 2, diam1);
 
-    //shape(hatch);
+    shape(hatch);
 
     noFill();
     stroke(lineColor);
     circle(dims.x / 2, dims.y / 2, diam0);
-    //circle(dims.x / 2, dims.y / 2, diam0 + 2);
   }
 }

@@ -5,55 +5,12 @@ PShape subtractShapes(PShape shape1, PShape shape2) {
 }
 
 PShape intersectShapes(PShape shape1, PShape shape2) {
-  //PShape ps = getCirc(x, y, r);
-
   PShape result = PGS_ShapeBoolean.intersect(shape1, shape2);
-  //PGS_Conversion.disableAllFill(result);
 
   return result;
 }
 
-PShape removeHiddenLines(ArrayList<Projectile> list) {
-  ArrayList<Projectile> listCopy = (ArrayList)list.clone();
-  //ArrayList<Projectile> listCopy = new ArrayList<Projectile>();
-  //for(Projectile p : list) {
-  //  listCopy.add(p);
-  //}
-
-  Projectile sun = new Projectile(2);
-  sun.diameter = diam1;
-  sun.pos = new PVector(dims.x / 2, dims.y / 2);
-  listCopy.add(sun);
-
-  int len = listCopy.size();
-  PShape group = createShape(GROUP);
-
-  PShape temp;
-  Projectile pj;
-  for (int i = len - 2; i >= 0; i--) {
-    pj = listCopy.get(i);
-    temp = getCircle(pj.pos, pj.diameter, false);
-    if (pj.kind == 1) {
-      temp = getLine(pj.pos, pj.diameter, pj.angle);
-    }
-    if (pj.kind == 2) {
-      temp = getCircle(pj.pos, pj.diameter, false);
-    }
-    PShape cluster = getCluster(listCopy, i, null);
-    temp = PGS_ShapeBoolean.subtract(temp, cluster);
-    group.addChild(temp);
-  }
-
-  //pj = listCopy.get(len - 1);
-  //temp = getCircle(pj.pos, pj.diameter, true);
-  //group.addChild(temp);
-  PGS_Conversion.disableAllFill(group);
-  PGS_Conversion.setAllStrokeColor(group, color(0, 0, 255), 1);
-
-  return group;
-}
-
-PShape[] removeHiddenLines2(ArrayList<Projectile> list) {
+PShape[] removeHiddenLines(ArrayList<Projectile> list) {
   ArrayList<Projectile> listCopy = (ArrayList)list.clone();
   int j = 0;
 
@@ -117,22 +74,6 @@ PShape[] removeHiddenLines2(ArrayList<Projectile> list) {
   return new PShape[]{group0, group1, group2, group3};
 }
 
-// Collected stars that are in the foreground and output
-// a union of their shapes
-//PShape blobForeItems(ArrayList<Projectile> list) {
-//  int len = list.size();
-//  PShape group = createShape(GROUP);
-
-//  for (int i = len - 2; i >= 0; i--) {
-//    Projectile pj = list.get(i);
-//    if (pj.kind == 2 && i < len / 2 && inBounds(pj.pos, pj.diameter)) {
-//      PShape c = getCircle(pj.pos, pj.diameter, true);
-//      group.addChild(c);
-//    }
-//  }
-
-//  return PGS_ShapeBoolean.union(group);
-//}
 PShape blobItems(ArrayList<Projectile> list, int limit) {
   //int len = list.size();
   PShape group = createShape(GROUP);
@@ -148,7 +89,6 @@ PShape blobItems(ArrayList<Projectile> list, int limit) {
 
   return PGS_ShapeBoolean.union(group);
 }
-
 
 boolean inBounds(PVector pos, int s) {
   boolean inBoundsHoriz = pos.x > - s / 2 && pos.x < dims.x + s / 2;

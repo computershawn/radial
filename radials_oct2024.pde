@@ -65,14 +65,6 @@ void setup() {
 
   center = new PVector(cx, cy);
 
-  //for (int i = 0; i < numStars; i++) {
-  //  //PVector traj = PVector.random2D();
-  //  // Projectile star = new Projectile(new PVector(2 * wd, 0), traj);
-  //  //int kind = i < numStars / 2 ? 1 : 2;
-  //  int kind = i % 2 == 0 ? 1 : 2;
-  //  //Projectile star = new Projectile(kind);
-  //  stars[i] = new Projectile(kind);
-  //}
   framePoints = getFramePoints();
   niceFrame = getNiceLittleFrame(true);
   niceFrameOpen = getNiceLittleFrame(false);
@@ -95,8 +87,6 @@ void setup() {
       frames.add(new Frame(xOff + xStep * j, yOff + yStep * i, i * frameCols + j));
     }
   }
-  //frames.add(new Frame(0, 20, 0));
-  //frames.add(new Frame(dims.x, 20, 1));
 
   currentMode = Modes.PRINT;
   frameRate(fps);
