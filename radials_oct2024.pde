@@ -12,16 +12,17 @@ int numStars = 60;
 int numRays = 60;
 boolean saving = false;
 int fps = 15;
-int animationDuration = 12;
+int animationDuration = 48;//12;
 
-Projectile[] stars = new Projectile[numStars];
+//Projectile[] stars = new Projectile[numStars];
 ArrayList<Ray> rays;
 
 int diam0 = 40;
 int diam1 = diam0 + 4;
 int minDiam = 6;
 int maxDiam = 16;
-PShape frame, fancyMat;
+PShape niceFrame, fancyMat, simpleFrame;
+PShape clipFrame1, clipFrame2;
 Sun sun;
 ArrayList<PVector> framePoints;
 
@@ -40,7 +41,6 @@ ArrayList<Frame> frames;
 int currentPage = 0;
 
 void setup() {
-  //size(166, 226);
   size(612, 792);
 
   wd = width;
@@ -65,17 +65,20 @@ void setup() {
 
   center = new PVector(cx, cy);
 
-  for (int i = 0; i < numStars; i++) {
-    //PVector traj = PVector.random2D();
-    // Projectile star = new Projectile(new PVector(2 * wd, 0), traj);
-    //int kind = i < numStars / 2 ? 1 : 2;
-    int kind = i % 2 == 0 ? 1 : 2;
-    //Projectile star = new Projectile(kind);
-    stars[i] = new Projectile(kind);
-  }
+  //for (int i = 0; i < numStars; i++) {
+  //  //PVector traj = PVector.random2D();
+  //  // Projectile star = new Projectile(new PVector(2 * wd, 0), traj);
+  //  //int kind = i < numStars / 2 ? 1 : 2;
+  //  int kind = i % 2 == 0 ? 1 : 2;
+  //  //Projectile star = new Projectile(kind);
+  //  stars[i] = new Projectile(kind);
+  //}
   framePoints = getFramePoints();
-  frame = niceLittleFrame();
+  niceFrame = getNiceLittleFrame();
   fancyMat = niceLittleMat();
+  simpleFrame = simpleMat(6);
+  clipFrame1 = getClipFrame1();
+  clipFrame2 = getClipFrame2();
   sun = new Sun();
 
   frames = new ArrayList<Frame>();
@@ -98,95 +101,11 @@ void setup() {
   frameRate(fps);
 }
 
-//void renderAnimation() {
-//  background(fillColor);
-
-//  // Layer: Rays
-//  for (Ray ray : rays) {
-//    ray.update();
-//    ray.render();
-//  }
-
-//  // Update star positions
-//  for (int i = 0; i < numStars; i++) {
-//    stars[i].update();
-//  };
-
-//  // Layer: Background stars
-//  for (int i = 0; i < numStars / 2; i++) {
-//    stars[i].render();
-//  };
-
-//  // Layer: Mat
-//  //shape(fancyMat);
-//  shape(frame);
-
-//  // Layer: Foreground stars
-//  for (int i = numStars / 2; i < numStars; i++) {
-//    stars[i].render();
-//  };
-
-//  // Layer: Outer frame
-//  int m = 6;
-//  simpleMat(m);
-
-//  // Layer: Sun in center
-//  sun.render();
-//}
-
-//void updateScene() {
-//  // Layer: Rays
-//  for (Ray ray : rays) {
-//    ray.update();
-//  }
-
-//  // Update star positions
-//  for (int i = 0; i < numStars; i++) {
-//    stars[i].update();
-//  };
-//}
-
-//void renderAnimation() {
-//  //background(fillColor);
-
-//  // Layer: Rays
-//  for (Ray ray : rays) {
-//    ray.render();
-//  }
-
-//  // Layer: Background stars
-//  for (int i = 0; i < numStars / 2; i++) {
-//    stars[i].render();
-//  };
-
-//  // Layer: Mat
-//  //shape(fancyMat);
-//  shape(frame);
-
-//  // Layer: Foreground stars
-//  for (int i = numStars / 2; i < numStars; i++) {
-//    stars[i].render();
-//  };
-
-//  // Layer: Outer frame
-//  int m = 6;
-//  simpleMat(m);
-
-//  // Layer: Sun in center
-//  sun.render();
-//}
-
 void renderPrintMode() {
   if (saving) {
     beginRecord(SVG, "output/radials-" + getTimestamp() + "-" + currentPage + ".svg");
   }
 
-  //pushMatrix();
-  //translate(cx - dims.x / 2, cy - dims.y / 2);
-  //renderAnimation();
-  //popMatrix();
-  //Frame f = frames.get(0);
-  //f.render(0, true);
   for (int j = 0; j < frames.size(); j++) {
     Frame f = frames.get(j);
     f.render(j, false);
@@ -202,14 +121,6 @@ void draw() {
   background(fillColor);
   switch(currentMode) {
   case ANIMATE:
-    //pushMatrix();
-    //translate(cx - dims.x / 2, cy - dims.y / 2);
-    //renderAnimation();
-    //popMatrix();
-    //for (int j = 0; j < frames.size(); j++) {
-    //  Frame f = frames.get(j);
-    //  f.render(j);
-    //}
     Frame f = frames.get(0);
     f.render(frameCount, true);
     break;

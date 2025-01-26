@@ -7,9 +7,12 @@ class Projectile {
   float angle;
   float x0, y0;
   int kind;
-  boolean isFore = random(1) > 0.5;
+  //boolean isFore = random(1) > 0.5;
   int timeSpan;
   PShape circo;
+  //PShape circ;
+  PShape clip;
+  int mar = 6;
 
   Projectile(int _kind) {
     kind = _kind;
@@ -21,31 +24,42 @@ class Projectile {
     int r = 6;
     x0 = r * cos(angle);
     y0 = r * sin(angle);
-    circo = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
+    //circo = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
+    clip = createShape();
+    float w = dims.x;
+    float h = dims.y;
+    fill(0, 127);
+    clip.beginShape();
+    clip.vertex(mar, mar);
+    clip.vertex(w - mar, mar);
+    clip.vertex(w - mar, h - mar);
+    clip.vertex(mar, h - mar);
+    clip.endShape(CLOSE);
   }
 
   void update(int frameNum) {
     int currentFrame = frameNum + frameOffset;
 
     float amt = currentFrame % timeSpan / (float) timeSpan;
-    float t = amt * amt * amt; // cubic
+    amt = easeInCubic(amt);
+    //float t = amt * amt * amt; // cubic
 
-    pos.x = dims.x / 2 + t * (diag + diameter / 2) * cos(angle);
-    pos.y = dims.y / 2 + t * (diag + diameter / 2) * sin(angle);
-    //frameOffset += 1;
+    pos.x = dims.x / 2 + amt * (diag + diameter / 2) * cos(angle);
+    pos.y = dims.y / 2 + amt * (diag + diameter / 2) * sin(angle);
   }
 
-  //PShape circo() {
-  //  int n = 20;
+  //PShape circo(float xpos, float ypos, float diam) {
+  //  int n = 24;
   //  PShape temp = createShape();
   //  temp.beginShape();
-  //  for (int i = 0; i <= n; i++) {
+  //  for (int i = 0; i < n; i++) {
   //    float ang = TWO_PI * i / n;
-  //    float x = pos.x + 1.5 * diameter * cos(ang);
-  //    float y = pos.y + 1.5 * diameter * sin(ang);
+  //    float x = xpos + 0.5 * diam * cos(ang);
+  //    float y = ypos + 0.5 * diam * sin(ang);
   //    temp.vertex(x, y);
   //  }
-  //  temp.endShape();
+  //  temp.endShape(CLOSE);
+
   //  return temp;
   //}
 
@@ -59,10 +73,40 @@ class Projectile {
     return true;
   }
 
-  void render() {
+  PShape getGeom() {
+    PShape temp;
     switch(kind) {
-    case 1:
-      if (inRange(pos.x, pos.y, sqrt(x0 * x0 + y0 + y0))) {
+    case 1: // Projectile instance is a line
+      float x1 = pos.x + x0;
+      float y1 = pos.y + y0;
+      float x2 = pos.x - x0;
+      float y2 = pos.y - y0;
+      temp = createShape();
+      temp.beginShape();
+      temp.vertex(x1, y1);
+      temp.vertex(x2, y2);
+      temp.endShape();
+
+      break;
+
+      //PShape blep = intersectShapes(clip, temp);
+      //PGS_Conversion.disableAllFill(blep);
+      //PGS_Conversion.setAllStrokeColor(blep, lineColor, 1);
+      //shape(blep);
+      //break;
+    case 2: // Projectile instance is a circle
+    default:
+      temp = circo( pos.x, pos.y, diameter, true);
+    }
+
+    return temp;
+  }
+
+  void render() {
+    float dist = dist(pos.x, pos.y, dims.x / 2, dims.y / 2);
+    switch(kind) {
+    case 1: // Projectile instance is a line
+      if (dist > 0.5 * (diam1 - diameter)) {
         float x1 = pos.x + x0;
         float y1 = pos.y + y0;
         float x2 = pos.x - x0;
@@ -72,28 +116,50 @@ class Projectile {
         temp.vertex(x1, y1);
         temp.vertex(x2, y2);
         temp.endShape();
-        // Intersect resulting shape with center sun
-        PShape ln = subtractShapes(temp, circo);
-        PGS_Conversion.setAllStrokeColor(ln, lineColor, 1);
-        //if (inRange(pos.x, pos.y, sqrt(x0 * x0 + y0 + y0))) {
-        //  PGS_Conversion.setAllStrokeColor(ln, lineColor, 1);
-        //} else {
-        //  PGS_Conversion.setAllStrokeColor(ln, color(255, 0, 0), 1);
-        //}
-        shape(ln);
+
+        PShape blep = intersectShapes(clip, temp);
+        PGS_Conversion.disableAllFill(blep);
+        PGS_Conversion.setAllStrokeColor(blep, lineColor, 1);
+        shape(blep);
       }
       break;
-    case 2:
+    case 2: // Projectile instance is a circle
     default:
-      //if (inRange(pos.x, pos.y, diameter / 2)) {
-      float dist = dist(pos.x, pos.y, dims.x / 2, dims.y / 2);
-      boolean withinBounds = inRange(pos.x, pos.y, diameter / 2);
-      if (dist > 0.5 * (diam1 - diameter) && withinBounds) {
+      //if (dist > 0.5 * (diam1 - diameter)) {
+      //  PShape circ = circo(cx, cy, diam1);
+      //  PShape blep = intersectShapes(clip, circ);
+      //  PGS_Conversion.setAllFillColor(blep, fillColor);
+      //  PGS_Conversion.setAllStrokeColor(blep, lineColor, 1);
+      //  shape(blep);
+
+      //  //PShape circ1 = circo(cx, cy, diam1);
+      //  //PShape circ2 = circo(pos.x, pos.y, diameter);
+      //  //PShape blep = intersectShapes(circ2, circ1);
+      //  //PGS_Conversion.setAllFillColor(blep, fillColor);
+      //  //PGS_Conversion.setAllStrokeColor(blep, lineColor, 1);
+      //  //shape(blep);
+      //}
+      // Draw faceted circle and take into account whether
+      // the center circle overlaps it
+      //if (dist > 0.5 * (diam1 - diameter)) {
+      //  PShape circ = circo(pos.x, pos.y, diameter);
+      //  PShape sunOutline = circo(dims.x / 2, dims.y / 2, diam1);
+      //  //PShape blep = intersectShapes(clip, circ);
+      //  //PShape blep = subtractShapes(circ, sunOutline);
+      //  PShape blep = intersectShapes(clip, circ);
+      //  blep = subtractShapes(blep, sunOutline);
+
+      //  PGS_Conversion.setAllFillColor(blep, fillColor);
+      //  PGS_Conversion.setAllStrokeColor(blep, lineColor, 1);
+      //  shape(blep);
+      //}
+
+      if (dist > 0.5 * (diam1 - diameter)) {
         fill(fillColor);
         stroke(lineColor);
-        //if (dist > 0.5 * (diam1 - diameter)) {
         circle(pos.x, pos.y, diameter);
       }
+
       // The below code uses PGS boolean operations to create stars
       // however, the line intersecting the center sun and the star
       // is also drawn. This is not the desired effect. So instead

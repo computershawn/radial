@@ -59,7 +59,28 @@ class Ray {
   //  PGS_Conversion.setAllStrokeColor(ray, lineColor, 1);
   //  shape(ray);
   //}
-  void render() {
+  //void render() {
+  //  PShape temp = createShape();
+  //  temp.beginShape();
+  //  float xa = r0 * cos(angle);
+  //  float ya = r0 * sin(angle);
+  //  float xb = r1 * cos(angle);
+  //  float yb = r1 * sin(angle);
+  //  temp.vertex(dims.x / 2, dims.y / 2);
+  //  temp.vertex(dims.x / 2 + xa, dims.y / 2 + ya);
+  //  temp.vertex(dims.x / 2 + xb, dims.y / 2 + yb);
+  //  temp.endShape(CLOSE);
+    
+  //  // Intersect initial shape with frame
+  //  PShape ray = intersectShapes(temp, frame);
+  
+  //  // Intersect resulting shape with center sun
+  //  ray = subtractShapes(ray, circo);
+  
+  //  PGS_Conversion.setAllStrokeColor(ray, lineColor, 1);
+  //  shape(ray);
+  //}
+  PShape getGeom() {
     PShape temp = createShape();
     temp.beginShape();
     float xa = r0 * cos(angle);
@@ -71,13 +92,14 @@ class Ray {
     temp.vertex(dims.x / 2 + xb, dims.y / 2 + yb);
     temp.endShape(CLOSE);
     
-    // Intersect initial shape with frame
-    PShape ray = intersectShapes(temp, frame);
+    return temp;    
+    //// Intersect initial shape with frame
+    //PShape ray = intersectShapes(temp, frame);
   
-    // Intersect resulting shape with center sun
-    ray = subtractShapes(ray, circo);
+    //// Intersect resulting shape with center sun
+    //ray = subtractShapes(ray, circo);
   
-    PGS_Conversion.setAllStrokeColor(ray, lineColor, 1);
-    shape(ray);
+    //PGS_Conversion.setAllStrokeColor(ray, lineColor, 1);
+    //shape(ray);
   }
 }

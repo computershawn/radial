@@ -1,3 +1,25 @@
+PShape circo(float xpos, float ypos, float diam, boolean close) {
+  int n = 24;
+  PShape temp = createShape();
+  temp.beginShape();
+  temp.noFill();
+
+  for (int i = 0; i < n; i++) {
+    float ang = TWO_PI * i / n;
+    float x = xpos + 0.5 * diam * cos(ang);
+    float y = ypos + 0.5 * diam * sin(ang);
+    temp.vertex(x, y);
+  }
+  if (close) {
+
+    temp.endShape(CLOSE);
+  } else {
+    temp.endShape();
+  }
+
+  return temp;
+}
+
 ArrayList<PVector> getFramePoints() {
   ArrayList<PVector> points = new ArrayList<PVector>();
 
@@ -30,7 +52,7 @@ String getTimestamp() {
   return ts;
 }
 
-PShape niceLittleFrame() {
+PShape getNiceLittleFrame() {
   PShape f = createShape();
   PVector p;
 
@@ -61,9 +83,48 @@ PShape niceLittleFrame() {
   return f;
 }
 
+PShape getClipFrame1() {
+  PShape inner = getNiceLittleFrame();
+  PShape outer = createShape();
+  int m = 20;
+
+  outer.beginShape();
+  outer.vertex(-m, -m);
+  outer.vertex(dims.x + m, -m);
+  outer.vertex(dims.x + m, dims.y + m);
+  outer.vertex(-m, dims.y + m);
+  outer.endShape(CLOSE);
+
+  return PGS_ShapeBoolean.subtract(outer, inner);
+}
+
+PShape getClipFrame2() {
+  int m = 20;
+  PShape outer = createShape();
+  //PShape inner = createShape();
+
+  outer.beginShape();
+  outer.vertex(-m, -m);
+  outer.vertex(dims.x + m, -m);
+  outer.vertex(dims.x + m, dims.y + m);
+  outer.vertex(-m, dims.y + m);
+  outer.endShape(CLOSE);
+
+  PShape inner = simpleMat(6);
+
+  //inner.beginShape();
+  //inner.vertex(n, n);
+  //inner.vertex(wd - n, n);
+  //inner.vertex(wd - n, ht - n);
+  //inner.vertex(n, ht - n);
+  //inner.endShape(CLOSE);
+
+  return PGS_ShapeBoolean.subtract(outer, inner);
+}
+
 PShape niceLittleMat() {
   PShape f = createShape();
-  PShape g = niceLittleFrame();
+  PShape g = getNiceLittleFrame();
 
   f.beginShape();
   //f.fill(#ff00ff);
@@ -76,29 +137,33 @@ PShape niceLittleMat() {
   f.endShape(CLOSE);
 
   PShape h = PGS_ShapeBoolean.subtract(f, g);
+
   PGS_Conversion.disableAllStroke(h);
-  PGS_Conversion.setAllFillColor(h, fillColor);
+  //PGS_Conversion.setAllFillColor(h, fillColor);
+  //PGS_Conversion.setAllFillColor(h, color(0, 0, 0, 127));
+  PGS_Conversion.disableAllFill(h);
+
   return h;
 }
 
-void simpleMat(int m) {
+void simpleMatORIG(int m) {
   float w = dims.x;
   float h = dims.y;
-  noStroke();
-  fill(fillColor);
-  //fill(0, 127);
-  beginShape();
-  vertex(0, 0);
-  vertex(w, 0);
-  vertex(w, h);
-  vertex(0, h);
-  beginContour();
-  vertex(m, m);
-  vertex(m, h - m);
-  vertex(w - m, h - m);
-  vertex(w - m, m);
-  endContour();
-  endShape(CLOSE);
+  //noStroke();
+  //fill(fillColor);
+  ////fill(0, 127);
+  //beginShape();
+  //vertex(0, 0);
+  //vertex(w, 0);
+  //vertex(w, h);
+  //vertex(0, h);
+  //beginContour();
+  //vertex(m, m);
+  //vertex(m, h - m);
+  //vertex(w - m, h - m);
+  //vertex(w - m, m);
+  //endContour();
+  //endShape(CLOSE);
 
   noFill();
   stroke(lineColor);
@@ -107,19 +172,37 @@ void simpleMat(int m) {
   rect(n, n, w - 2 * n, h - 2 * n);
 }
 
-PShape subtractShapes(PShape shape1, PShape shape2) {
-  PShape result = PGS_ShapeBoolean.subtract(shape1, shape2);
+PShape simpleMat(int m) {
+  float w = dims.x;
+  float h = dims.y;
+  //noStroke();
+  //fill(fillColor);
+  ////fill(0, 127);
+  //beginShape();
+  //vertex(0, 0);
+  //vertex(w, 0);
+  //vertex(w, h);
+  //vertex(0, h);
+  //beginContour();
+  //vertex(m, m);
+  //vertex(m, h - m);
+  //vertex(w - m, h - m);
+  //vertex(w - m, m);
+  //endContour();
+  //endShape(CLOSE);
 
-  return result;
-}
+  noFill();
+  stroke(lineColor);
+  rect(m, m, w - 2 * m, h - 2 * m);
+  PShape temp = createShape();
+  temp.beginShape();
+  temp.vertex(m, m);
+  temp.vertex(w - m, m);
+  temp.vertex(w - m, h - m);
+  temp.vertex(m, h - m);
+  temp.endShape(CLOSE);
 
-PShape intersectShapes(PShape shape1, PShape shape2) {
-  //PShape ps = getCirc(x, y, r);
-
-  PShape result = PGS_ShapeBoolean.intersect(shape1, shape2);
-  //PGS_Conversion.disableAllFill(result);
-
-  return result;
+  return temp;
 }
 
 void satellite() {
@@ -127,4 +210,9 @@ void satellite() {
   stroke(255, 0, 0);
   float d = 0.5 * wd;
   arc(cx, cy, d, d, 0, radians(15));
+}
+
+
+float easeInCubic(float t) {
+  return t * t * t;
 }
