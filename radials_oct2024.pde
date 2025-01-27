@@ -8,13 +8,13 @@ PVector center;
 
 int lineColor = #04A9B9;
 int fillColor = #E5FFFA;
-int numStars = 60;
+int numStars = 8;//80;
 int numRays = 60;
 boolean saving = false;
 int fps = 15;
-int animationDuration = 48;//12;
+int animationDuration = 12;
+int timeSpan;
 
-//Projectile[] stars = new Projectile[numStars];
 ArrayList<Ray> rays;
 
 int diam0 = 40;
@@ -27,9 +27,9 @@ Sun sun;
 ArrayList<PVector> framePoints;
 
 PVector dims = new PVector(166, 226);
-int frameCols = 3;
+int frameCols = 6;
 int frameRows = 3;
-int numPages = 20;
+int numPages = fps * animationDuration / (frameCols * frameRows);
 int pageStartIndex = 0;
 
 public enum Modes {
@@ -41,14 +41,17 @@ ArrayList<Frame> frames;
 int currentPage = 0;
 
 void setup() {
-  size(612, 792);
+  size(1224, 792);
+  textSize(16);
+    println(numPages);
 
   wd = width;
   ht = height;
   cx = wd / 2;
   cy = ht / 2;
-  //diag = 0.5 * sqrt(ht * ht + wd * wd);
   diag = 0.5 * sqrt(dims.y * dims.y + dims.x * dims.x);
+
+  timeSpan = fps * animationDuration;
 
   rays = new ArrayList<Ray>();
   for (int i = 0; i < numRays; i++) {
@@ -97,9 +100,15 @@ void renderPrintMode() {
     beginRecord(SVG, "output/radials-" + getTimestamp() + "-" + currentPage + ".svg");
   }
 
-  for (int j = 0; j < frames.size(); j++) {
-    Frame f = frames.get(j);
-    f.render(j, false);
+  //for (int j = 0; j < frames.size(); j++) {
+  //  Frame f = frames.get(j);
+  //  f.render(frameCount);
+  //}
+  int k = 0;
+  for (Frame f : frames) {
+    //Frame f = frames.get(j);
+    f.render();
+    k++;
   }
 
   if (saving) {
@@ -113,7 +122,7 @@ void draw() {
   switch(currentMode) {
   case ANIMATE:
     Frame f = frames.get(0);
-    f.render(frameCount, true);
+    f.render();
     break;
   case PRINT:
   default:
@@ -151,5 +160,6 @@ void keyPressed() {
     }
 
     pageStartIndex = currentPage * frameCols * frameRows;
+    println("changed to page " + currentPage + "\n--------");
   }
 }

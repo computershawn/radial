@@ -14,7 +14,6 @@ class Frame {
     ht = height;
     cx = wd / 2;
     cy = ht / 2;
-    //diag = 0.5 * sqrt(ht * ht + wd * wd);
     diag = 0.5 * sqrt(dims.y * dims.y + dims.x * dims.x);
 
     rays = new ArrayList<Ray>();
@@ -42,9 +41,9 @@ class Frame {
     sunOutline = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
   }
 
-  void render(int frameNumber, boolean isAnimating) {
+  void render() {
     pushMatrix();
-    if (isAnimating) {
+    if (currentMode == Modes.ANIMATE) {
       translate(cx - dims.x / 2, cy - dims.y / 2);
     } else {
       translate(xPos, yPos);
@@ -52,12 +51,13 @@ class Frame {
 
     // Layer: Rays
     PShape rayGroup = createShape(GROUP);
-    PShape starGroup = createShape(GROUP);
+    //PShape starGroup = createShape(GROUP);
     for (Ray ray : rays) {
       if (currentMode == Modes.ANIMATE) {
-        ray.update(frameNumber);
-      } else {
-        ray.update(index + pageStartIndex);
+        ray.update(frameCount);
+      }
+      if (currentMode == Modes.PRINT) {
+        ray.update(currentPage * frameCols * frameRows + index);
       }
       PShape r = ray.getGeom();
       rayGroup.addChild(r);
@@ -72,15 +72,25 @@ class Frame {
     PGS_Conversion.setAllStrokeColor(rayGroup, lineColor, 1);
     shape(rayGroup);
 
+    //if (index == 1) {
+    //println(currentPage * frameCols * frameRows + index);
+    /*
+  00 01 02 03 04 05 06 07 08
+     09 10 11 12 13 14 15 16 17
+     18 19 20 21 22 23 24 25 26
+     */
+    //}
+
+    int k = 0;
     // Update star positions
     for (Projectile star : stars) {
       if (currentMode == Modes.ANIMATE) {
-        star.update(frameNumber);
-      } else {
-        star.update(index + pageStartIndex);
+        star.update(frameCount);
       }
-      PShape sg = star.getGeom();
-      starGroup.addChild(sg);
+      if (currentMode == Modes.PRINT) {
+        star.updateOther(index);
+      }
+      k++;
     };
 
     PShape[] temp = new PShape[numStars / 2];
@@ -133,7 +143,7 @@ class Frame {
     PGS_Conversion.setAllStrokeColor(ps2[3], lineColor, 1);
     PGS_Conversion.disableAllFill(ps2[2]);
     PGS_Conversion.disableAllFill(ps2[3]);
-    
+
     // Layer: Sun in center
     sun.render();
 
@@ -156,6 +166,9 @@ class Frame {
     noFill();
     int b = 3;
     rect(b, b, dims.x - 2 * b, dims.y - 2 * b);
+
+    fill(0);
+    text(currentPage * frameCols * frameRows + index, 10, dims.y - 10);
 
     popMatrix();
   }

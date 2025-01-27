@@ -4,7 +4,6 @@ class Ray {
   float startAngle;
   float angle;
   int frameOffset;
-  int timeSpan;
   int index;
   float sweep;
   float travel;
@@ -18,7 +17,6 @@ class Ray {
     endPoint = _pt1;
     startAngle = random(TWO_PI);
     angle = startAngle;
-    timeSpan = fps * animationDuration;
     frameOffset = floor(random(timeSpan));
     sweep = 0.5 * random(radians(6), radians(24));
     travel = 0.5 * random(radians(12), radians(135));
