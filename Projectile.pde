@@ -56,37 +56,37 @@ class Projectile {
     pos.y = dims.y / 2 + amt * (diag + diameter / 2) * sin(angle);
   }
   
-  void updateOther(int index) {
-    int frameNum = currentPage * frameCols * frameRows + index + frameOffset;
-    // Example
-    // timeSpan is 180
-    // frameNumber is 143
-    // frameOffset = 87
-    // 143 + 87 = 230
-    // 230 % 180 is 50
-    // amt = 50/180 = 0.277
-    //
-    // what if frameOffset is 2?
-    // timespan  177  178  179  180  181
-    //           179  180  181  182  183
-    //           179  0    1    2    3
-    //           .99  0    .005 .01  .016
+  //void updateOther(int index) {
+  //  int frameNum = currentPage * frameCols * frameRows + index + frameOffset;
+  //  // Example
+  //  // timeSpan is 180
+  //  // frameNumber is 143
+  //  // frameOffset = 87
+  //  // 143 + 87 = 230
+  //  // 230 % 180 is 50
+  //  // amt = 50/180 = 0.277
+  //  //
+  //  // what if frameOffset is 2?
+  //  // timespan  177  178  179  180  181
+  //  //           179  180  181  182  183
+  //  //           179  0    1    2    3
+  //  //           .99  0    .005 .01  .016
     
-    //println(frameNum);
-    ////currentFrame = frameNum + frameOffset;
-    //float amt = frameNum % timeSpan / (float) timeSpan;
-    //amt = easeInCubic(amt);
+  //  //println(frameNum);
+  //  ////currentFrame = frameNum + frameOffset;
+  //  float amt = frameNum % timeSpan / (float) timeSpan;
+  //  amt = easeInCubic(amt);
 
-    //pos.x = dims.x / 2 + amt * (diag + diameter / 2) * cos(angle);
-    //pos.y = dims.y / 2 + amt * (diag + diameter / 2) * sin(angle);
-    //float amt = (float) (frameNum % timeSpan) / timeSpan;
-    float amt = (float) frameNum / timeSpan;
-    //println(frameNum);
-    //println("amt " + amt);
-    pos.x = dims.x / 2 + 60 * ((index % 8) / 8.0);
-    pos.x = dims.x / 2 + amt * 60;
-    pos.y = dims.y / 4;
-  }
+  //  pos.x = dims.x / 2 + amt * (diag + diameter / 2) * cos(angle);
+  //  pos.y = dims.y / 2 + amt * (diag + diameter / 2) * sin(angle);
+  //  //float amt = (float) (frameNum % timeSpan) / timeSpan;
+  //  //float amt = (float) frameNum / timeSpan;
+  //  //println(frameNum);
+  //  //println("amt " + amt);
+  //  //pos.x = dims.x / 2 + 60 * ((index % 8) / 8.0);
+  //  //pos.x = dims.x / 2 + amt * 60;
+  //  //pos.y = dims.y / 4;
+  //}
 
   boolean inRange(float x, float y, float r) {
     if (x < -r || x > dims.x + r) {

@@ -8,7 +8,7 @@ PVector center;
 
 int lineColor = #04A9B9;
 int fillColor = #E5FFFA;
-int numStars = 8;//80;
+int numStars = 40;//80;
 int numRays = 60;
 boolean saving = false;
 int fps = 15;
@@ -16,6 +16,7 @@ int animationDuration = 12;
 int timeSpan;
 
 ArrayList<Ray> rays;
+ArrayList<Projectile> stars;
 
 int diam0 = 40;
 int diam1 = diam0 + 4;
@@ -42,8 +43,8 @@ int currentPage = 0;
 
 void setup() {
   size(1224, 792);
-  textSize(16);
-    println(numPages);
+  //textSize(16);
+  println(numPages);
 
   wd = width;
   ht = height;
@@ -66,7 +67,14 @@ void setup() {
     rays.add(new Ray(pt0, pt1, i));
   };
 
-  center = new PVector(cx, cy);
+  stars = new ArrayList<Projectile>();
+
+  for (int i = 0; i < numStars; i++) {
+    int kind = i % 2 == 0 ? 1 : 2;
+    stars.add(new Projectile(kind));
+  }
+
+  //center = new PVector(cx, cy);
 
   framePoints = getFramePoints();
   niceFrame = getNiceLittleFrame(true);
@@ -100,15 +108,9 @@ void renderPrintMode() {
     beginRecord(SVG, "output/radials-" + getTimestamp() + "-" + currentPage + ".svg");
   }
 
-  //for (int j = 0; j < frames.size(); j++) {
-  //  Frame f = frames.get(j);
-  //  f.render(frameCount);
-  //}
-  int k = 0;
   for (Frame f : frames) {
     //Frame f = frames.get(j);
     f.render();
-    k++;
   }
 
   if (saving) {
@@ -121,8 +123,11 @@ void draw() {
   background(fillColor);
   switch(currentMode) {
   case ANIMATE:
-    Frame f = frames.get(0);
-    f.render();
+    Frame f0 = frames.get(0);
+    f0.render();
+    //translate(dims.x + 20, 0);
+    //Frame f1 = frames.get(1);
+    //f1.render();
     break;
   case PRINT:
   default:

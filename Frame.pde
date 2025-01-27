@@ -3,7 +3,7 @@ class Frame {
   int index;
   int mar = 6;
   PShape sunOutline;
-  ArrayList<Projectile> stars;
+  //ArrayList<Projectile> stars;
 
   Frame(float _xPos, float _yPos, int _index) {
     xPos = _xPos;
@@ -16,27 +16,27 @@ class Frame {
     cy = ht / 2;
     diag = 0.5 * sqrt(dims.y * dims.y + dims.x * dims.x);
 
-    rays = new ArrayList<Ray>();
-    for (int i = 0; i < numRays; i++) {
-      float angle = random(TWO_PI);
-      float x0 = diam0 * cos(angle) / 2;
-      float y0 = diam0 * sin(angle) / 2;
-      float x1 = diag * cos(angle);
-      float y1 = diag * sin(angle);
-      PVector pt0 = new PVector(cx + x0, cy + y0);
-      PVector pt1 = new PVector(cx + x1, cy + y1);
+    //rays = new ArrayList<Ray>();
+    //for (int i = 0; i < numRays; i++) {
+    //  float angle = random(TWO_PI);
+    //  float x0 = diam0 * cos(angle) / 2;
+    //  float y0 = diam0 * sin(angle) / 2;
+    //  float x1 = diag * cos(angle);
+    //  float y1 = diag * sin(angle);
+    //  PVector pt0 = new PVector(cx + x0, cy + y0);
+    //  PVector pt1 = new PVector(cx + x1, cy + y1);
 
-      rays.add(new Ray(pt0, pt1, i));
-    };
+    //  rays.add(new Ray(pt0, pt1, i));
+    //};
 
-    center = new PVector(cx, cy);
+    //center = new PVector(cx, cy);
 
-    stars = new ArrayList<Projectile>();
+    //stars = new ArrayList<Projectile>();
 
-    for (int i = 0; i < numStars; i++) {
-      int kind = i % 2 == 0 ? 1 : 2;
-      stars.add(new Projectile(kind));
-    }
+    //for (int i = 0; i < numStars; i++) {
+    //  int kind = i % 2 == 0 ? 1 : 2;
+    //  stars.add(new Projectile(kind));
+    //}
 
     sunOutline = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
   }
@@ -49,9 +49,17 @@ class Frame {
       translate(xPos, yPos);
     }
 
-    // Layer: Rays
-    PShape rayGroup = createShape(GROUP);
-    //PShape starGroup = createShape(GROUP);
+    // Update star positions
+    for (Projectile star : stars) {
+      if (currentMode == Modes.ANIMATE) {
+        star.update(frameCount);
+      }
+      if (currentMode == Modes.PRINT) {
+        star.update(currentPage * frameCols * frameRows + index);
+      }
+    };
+
+    // Update rays positions
     for (Ray ray : rays) {
       if (currentMode == Modes.ANIMATE) {
         ray.update(frameCount);
@@ -59,10 +67,14 @@ class Frame {
       if (currentMode == Modes.PRINT) {
         ray.update(currentPage * frameCols * frameRows + index);
       }
+    }
+
+    // Layer: Rays
+    PShape rayGroup = createShape(GROUP);
+    for (Ray ray : rays) {
       PShape r = ray.getGeom();
       rayGroup.addChild(r);
     }
-
     PShape circo = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam1, diam1);
     // Intersect initial shape with frame
     rayGroup = intersectShapes(rayGroup, niceFrame);
@@ -72,27 +84,7 @@ class Frame {
     PGS_Conversion.setAllStrokeColor(rayGroup, lineColor, 1);
     shape(rayGroup);
 
-    //if (index == 1) {
-    //println(currentPage * frameCols * frameRows + index);
-    /*
-  00 01 02 03 04 05 06 07 08
-     09 10 11 12 13 14 15 16 17
-     18 19 20 21 22 23 24 25 26
-     */
-    //}
-
-    int k = 0;
-    // Update star positions
-    for (Projectile star : stars) {
-      if (currentMode == Modes.ANIMATE) {
-        star.update(frameCount);
-      }
-      if (currentMode == Modes.PRINT) {
-        star.updateOther(index);
-      }
-      k++;
-    };
-
+    // Layer: Stars
     PShape[] temp = new PShape[numStars / 2];
     int j = 0;
     for (Projectile star : stars) {
@@ -167,8 +159,8 @@ class Frame {
     int b = 3;
     rect(b, b, dims.x - 2 * b, dims.y - 2 * b);
 
-    fill(0);
-    text(currentPage * frameCols * frameRows + index, 10, dims.y - 10);
+    //fill(0);
+    //text(currentPage * frameCols * frameRows + index, 10, dims.y - 10);
 
     popMatrix();
   }
