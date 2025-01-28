@@ -20,6 +20,23 @@ PShape circo(float xpos, float ypos, float diam, boolean close) {
   return temp;
 }
 
+PShape arcy(float xpos, float ypos, float diam, float angle0, float angle1) {
+  int n = 12;
+  PShape temp = createShape();
+  temp.beginShape();
+  temp.noFill();
+
+  for (int i = 0; i <= n; i++) {
+    float ang = angle0 + (float) i / n * (angle1 - angle0);
+    float x = xpos + 0.5 * diam * cos(ang);
+    float y = ypos + 0.5 * diam * sin(ang);
+    temp.vertex(x, y);
+  }
+  temp.endShape();
+
+  return temp;
+}
+
 ArrayList<PVector> getFramePoints() {
   ArrayList<PVector> points = new ArrayList<PVector>();
 
@@ -115,7 +132,7 @@ PShape getClipFrame2() {
   outer.vertex(dims.x + m, dims.y + m);
   outer.vertex(-m, dims.y + m);
   outer.endShape(CLOSE);
-  PShape inner = getSimpleMat(6);
+  PShape inner = getSimpleMat(mar);
 
   return PGS_ShapeBoolean.subtract(outer, inner);
 }

@@ -5,15 +5,16 @@ import micycle.pgs.*;
 int ht, wd, cx, cy;
 float diag;
 PVector center;
-
+//ADD ARCS TO CORNERS OF FRAME
 int lineColor = #04A9B9;
 int fillColor = #E5FFFA;
-int numStars = 40;//80;
+int numStars = 100;
 int numRays = 60;
 boolean saving = false;
 int fps = 15;
 int animationDuration = 12;
 int timeSpan;
+int mar = 6;
 
 ArrayList<Ray> rays;
 ArrayList<Projectile> stars;
@@ -43,8 +44,6 @@ int currentPage = 0;
 
 void setup() {
   size(1224, 792);
-  //textSize(16);
-  println(numPages);
 
   wd = width;
   ht = height;
@@ -74,13 +73,11 @@ void setup() {
     stars.add(new Projectile(kind));
   }
 
-  //center = new PVector(cx, cy);
-
   framePoints = getFramePoints();
   niceFrame = getNiceLittleFrame(true);
   niceFrameOpen = getNiceLittleFrame(false);
   fancyMat = getNiceLittleMat();
-  simpleFrame = getSimpleMat(6);
+  simpleFrame = getSimpleMat(mar);
   clipFrame1 = getClipFrame1();
   clipFrame2 = getClipFrame2();
   sun = new Sun();
@@ -99,17 +96,19 @@ void setup() {
     }
   }
 
-  currentMode = Modes.PRINT;
+  currentMode = Modes.ANIMATE;
   frameRate(fps);
+
+  println("Current page is " + getPage());
 }
 
 void renderPrintMode() {
   if (saving) {
-    beginRecord(SVG, "output/radials-" + getTimestamp() + "-" + currentPage + ".svg");
+    beginRecord(SVG, "output/radials-" + getTimestamp() + "-" + (currentPage + 1) + ".svg");
   }
 
   for (Frame f : frames) {
-    //Frame f = frames.get(j);
+    f.update();
     f.render();
   }
 
@@ -123,11 +122,9 @@ void draw() {
   background(fillColor);
   switch(currentMode) {
   case ANIMATE:
-    Frame f0 = frames.get(0);
-    f0.render();
-    //translate(dims.x + 20, 0);
-    //Frame f1 = frames.get(1);
-    //f1.render();
+    Frame f = frames.get(0);
+    f.update();
+    f.render();
     break;
   case PRINT:
   default:
@@ -137,7 +134,7 @@ void draw() {
 
 void keyPressed() {
   if (key == 's') {
-    println("saving");
+    println("\nSaving page " + getPage() + "\n--------");
     saving = true;
   }
   if (key == 'm' && !saving) {
@@ -165,6 +162,10 @@ void keyPressed() {
     }
 
     pageStartIndex = currentPage * frameCols * frameRows;
-    println("changed to page " + currentPage + "\n--------");
+    println("\nChanged to page " + getPage() + "\n--------");
   }
+}
+
+String getPage() {
+  return (currentPage + 1) + " / " + numPages;
 }

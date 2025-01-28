@@ -1,5 +1,5 @@
 class Sun {
-  int sp = 4;
+  int sp = 2;
   int numLines = 40;
   float xOff;
   PShape hatch;
