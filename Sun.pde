@@ -1,6 +1,6 @@
 class Sun {
-  int sp = 2;
-  int numLines = 40;
+  int sp = 1;
+  int numLines = 60;
   float xOff;
   PShape hatch;
 
@@ -23,17 +23,18 @@ class Sun {
 
     PShape circ = createShape(ELLIPSE, dims.x / 2, dims.y / 2, diam0, diam0);
     hatch = intersectShapes(circ, lines);
-    PGS_Conversion.setAllStrokeColor(hatch, lineColor, 1);
   }
 
   void render() {
-    noStroke();
-    fill(fillColor);
+    //noStroke();
+    //fill(co);
+    color co = multiColor ? lineColor3 : lineColor;
 
+    PGS_Conversion.setAllStrokeColor(hatch, co, 1);
     shape(hatch);
 
     noFill();
-    stroke(lineColor);
+    stroke(co);
     circle(dims.x / 2, dims.y / 2, diam0);
   }
 }

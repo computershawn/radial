@@ -6,11 +6,16 @@ int ht, wd, cx, cy;
 float diag;
 PVector center;
 //ADD ARCS TO CORNERS OF FRAME
-int lineColor = #04A9B9;
-int fillColor = #E5FFFA;
-int numStars = 100;
+int lineColor = #000000;
+int lineColor1 = #ff0000;
+int lineColor2 = #00ff00;
+int lineColor3 = #0000ff;
+int lineColor4 = #000000;
+int fillColor = #efefef;
+int numStars = 80;
 int numRays = 60;
 boolean saving = false;
+boolean multiColor = false;
 int fps = 15;
 int animationDuration = 12;
 int timeSpan;
@@ -100,6 +105,8 @@ void setup() {
   frameRate(fps);
 
   println("Current page is " + getPage());
+  println("Press 'c' to switch to multi-color view");
+  println("Press 'm' to switch to print mode");
 }
 
 void renderPrintMode() {
@@ -144,6 +151,15 @@ void keyPressed() {
     } else {
       println(":: View animation mode");
       currentMode = Modes.ANIMATE;
+    }
+  }
+  if (key == 'c' && !saving) {
+    if (multiColor) {
+      multiColor = false;
+      println(":: Switched to multi-color");
+    } else {
+      multiColor = true;
+      println(":: Switched to single-color");
     }
   }
   if (key == CODED && !saving && currentMode == Modes.PRINT) {

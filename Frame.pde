@@ -64,6 +64,7 @@ class Frame {
   }
 
   void renderRays() {
+    color co = multiColor ? lineColor3 : lineColor;
     PShape rayGroup = createShape(GROUP);
     for (Ray ray : rays) {
       PShape r = ray.getGeom();
@@ -75,7 +76,7 @@ class Frame {
     PShape starCluster = blobItems(stars, stars.size());
     rayGroup = subtractShapes(rayGroup, circo);
     rayGroup = subtractShapes(rayGroup, starCluster);
-    PGS_Conversion.setAllStrokeColor(rayGroup, lineColor, 1);
+    PGS_Conversion.setAllStrokeColor(rayGroup, co, 1);
     shape(rayGroup);
   }
 
@@ -120,12 +121,13 @@ class Frame {
     }
     lines1.endShape();
 
+    color co = multiColor ? lineColor1 : lineColor;
     PShape lines0Clipped = intersectShapes(lines0, niceFrame);
     PShape lines1Clipped = intersectShapes(lines1, simpleFrame);
-    PGS_Conversion.setAllStrokeColor(lines0Clipped, lineColor, 1);
-    PGS_Conversion.setAllStrokeColor(lines1Clipped, lineColor, 1);
-    PGS_Conversion.setAllStrokeColor(ps[2], lineColor, 1);
-    PGS_Conversion.setAllStrokeColor(ps[3], lineColor, 1);
+    PGS_Conversion.setAllStrokeColor(lines0Clipped, co, 1);
+    PGS_Conversion.setAllStrokeColor(lines1Clipped, co, 1);
+    PGS_Conversion.setAllStrokeColor(ps[2], co, 1);
+    PGS_Conversion.setAllStrokeColor(ps[3], co, 1);
     PGS_Conversion.disableAllFill(ps[2]);
     PGS_Conversion.disableAllFill(ps[3]);
 
@@ -139,19 +141,23 @@ class Frame {
   }
 
   void renderPictureFrame() {
+    color co = multiColor ? lineColor3 : lineColor;
     // Layer: Stylized frame
     PShape blob = blobItems(stars, stars.size() / 2);
     PShape niceFrameClipped = subtractShapes(niceFrameOpen, blob);
     PGS_Conversion.disableAllFill(niceFrameClipped);
-    PGS_Conversion.setAllStrokeColor(niceFrameClipped, lineColor, 1);
+    PGS_Conversion.setAllStrokeColor(niceFrameClipped, co, 1);
     shape(niceFrameClipped);
 
+    co = multiColor ? lineColor2 : lineColor;
     // Layer: Outer rectangle frame
+    PGS_Conversion.setAllStrokeColor(simpleFrame, co, 1);
     shape(simpleFrame);
     noFill();
     int b = 4;
+    stroke(co);
     rect(b, b, dims.x - 2 * b, dims.y - 2 * b);
-    
+
     // Interior rounded corners
     float a0 = 0;
     float a1 = HALF_PI;
@@ -180,7 +186,7 @@ class Frame {
     corners.addChild(arc2);
     corners.addChild(arc3);
     corners.addChild(arc4);
-    PGS_Conversion.setAllStrokeColor(corners, lineColor, 1);
+    PGS_Conversion.setAllStrokeColor(corners, co, 1);
     shape(corners);
   }
 }
